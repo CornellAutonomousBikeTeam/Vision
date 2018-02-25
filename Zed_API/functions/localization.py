@@ -65,15 +65,15 @@ def run2D(cam, runtime, camera_pose, viewer, py_translation):
                 ry = round(rotation[1], 2)
 
                 translation = camera_pose.get_translation(py_translation)
-                tx = round(translation.get()[0], 2)
-                ty = round(translation.get()[1], 2)
+                tx = round(translation.get()[0], 5)
+                ty = round(translation.get()[1], 5)
 
                 text_translation = str((tx, ty))
                 text_rotation = str((rx, ry))
                 pose_data = camera_pose.pose_data(core.PyTransform())
                 viewer.update_zed_position(pose_data)
 
-            print(text_translation, text_rotation, tracking_state)
+            print(text_translation)
         else:
             tp.c_sleep_ms(1)
 
