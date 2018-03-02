@@ -1,13 +1,18 @@
-from pylab import *
-import time
+import matplotlib.pyplot as plt
+import numpy as np
+plt.ion() ## Note this correction
+fig=plt.figure()
+plt.axis([0,1000,0,1])
 
-ion()
+i=0
+x=list()
+y=list()
 
-tstart = time.time()               # for profiling
-x = arange(0,2*pi,0.01)            # x-array
-line, = plot(x,sin(x))
-for i in arange(1,200):
-    line.set_ydata(sin(x+i/10.0))  # update the data
-    draw()                         # redraw the canvas
-
-print('FPS:' , 200/(time.time()-tstart))
+while i <1000:
+    temp_y=np.random.random();
+    x.append(i);
+    y.append(temp_y);
+    plt.scatter(i,temp_y);
+    i+=1;
+    plt.show()
+    plt.pause(0.0001) #Note this correction
