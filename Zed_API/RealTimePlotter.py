@@ -1,13 +1,20 @@
-from pylab import *
 import time
 
-ion()
+import gmplot
 
-tstart = time.time()               # for profiling
-x = arange(0,2*pi,0.01)            # x-array
-line, = plot(x,sin(x))
-for i in arange(1,200):
-    line.set_ydata(sin(x+i/10.0))  # update the data
-    draw()                         # redraw the canvas
+x = 0.0
+y = 0.0
 
-print('FPS:' , 200/(time.time()-tstart))
+gmap = gmplot.GoogleMapPlotter(37.428, -122.145, 16)
+
+while True:
+	x += random.random()
+	y += random.random()
+	time.sleep(0.5)
+
+	gmap.plot(latitudes, longitudes, 'cornflowerblue', edge_width=10)
+	gmap.scatter(more_lats, more_lngs, '#3B0B39', size=40, marker=False)
+	gmap.scatter(marker_lats, marker_lngs, 'k', marker=True)
+	gmap.heatmap(heat_lats, heat_lngs)
+
+	gmap.draw("mymap.html")
