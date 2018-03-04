@@ -22,6 +22,9 @@ import time
 import signal
 import sys
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 class Localization:
 
 	def __init__(self, dim):
@@ -94,6 +97,8 @@ class Localization:
 				tx = round(translation.get()[0], 5)
 				ty = round(translation.get()[1], 5)
 
+                plt.scatter(tx, ty)
+                plt.draw()
 				# store data point
 				data_point = [time.time(), rx, ry, tx, ty]
 				self.data.append(data_point)
