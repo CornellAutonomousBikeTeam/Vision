@@ -22,6 +22,9 @@ import time
 import signal
 import sys
 
+#import matplotlib
+#import matplotlib.pyplot as plt
+
 class Localization:
 
 	def __init__(self, dim):
@@ -60,15 +63,13 @@ class Localization:
 		runtime = zcam.PyRuntimeParameters()
 		camera_pose = zcam.PyPose()
 
-		viewer = tv.PyTrackingViewer()
-		viewer.init()
-
 		py_translation = core.PyTranslation()
 
 		if(dim=="2D"):
 			self.start_zed_2D(cam, runtime, camera_pose, py_translation)
-			viewer.exit()
 		elif(dim=="3D"):
+			viewer = tv.PyTrackingViewer()
+			viewer.init()
 			self.start_zed_3D(cam, runtime, camera_pose, viewer, py_translation)
 
 			viewer.exit()
@@ -76,33 +77,42 @@ class Localization:
         
 
 	def start_zed_2D(self, cam, runtime, camera_pose, py_translation):
-		zed_callback = threading.Thread(target=self.run2D, args=(cam, runtime, camera_pose,  py_translation))
+		zed_callback = threading.Thread(target=self.run2D, args=(cam, runtime, camera_pose, py_translation))
 		zed_callback.start()
 
 	def run2D(self, cam, runtime, camera_pose,  py_translation):
+		pts = 0
 		while True:
 			if cam.grab(runtime) == tp.PyERROR_CODE.PySUCCESS:
 				tracking_state = cam.get_position(camera_pose)
 				text_translation = ""
 				text_rotation = ""
-			if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
-				rotation = camera_pose.get_rotation_vector()
-				rx = round(rotation[0], 2)
-				ry = round(rotation[1], 2)
+				if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
+					rotation = camera_pose.get_rotation_vector()
+					rx = round(rotation[0], 2)
+					ry = round(rotation[1], 2)
 
-				translation = camera_pose.get_translation(py_translation)
-				tx = round(translation.get()[0], 5)
-				ty = round(translation.get()[1], 5)
+					translation = camera_pose.get_translation(py_translation)
+					tx = round(translation.get()[0], 5)
+					ty = round(translation.get()[1], 5)
 
-				# store data point
-				data_point = [time.time(), rx, ry, tx, ty]
-				self.data.append(data_point)
+					# store data point
+					data_point = [time.time(), rx, ry, tx, ty]
+					self.data.append(data_point)
 
-				text_translation = str((tx, ty))
-				text_rotation = str((rx, ry))
-				pose_data = camera_pose.pose_data(core.PyTransform())
+					text_translation = str((tx, ty))
+					text_rotation = str((rx, ry))
+					pose_data = camera_pose.pose_data(core.PyTransform())
+				
+					#plt.scatter(tx,ty)
+					#plt.draw()
+					#plt.pause(0.00000000001)
 
-				#print(text_translation)
+					if(pts%10==0):
+						self.save()
+					pts+=1
+					print(text_translation)
+					#tp.c_sleep_ms(1)
 			else:
 				tp.c_sleep_ms(1)
 
@@ -114,33 +124,32 @@ class Localization:
 
 	def run3D(self, cam, runtime, camera_pose, viewer, py_translation):
 		while True:
-			if cam.grab(runtime) == tp.PyERROR_CODE.PySUCCESS:
+			if(cam.grab(runtime) == tp.PyERROR_CODE.PySUCCESS):
 				tracking_state = cam.get_position(camera_pose)
 				text_translation = ""
 				text_rotation = ""
-			if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
-				rotation = camera_pose.get_rotation_vector()
-				rx = round(rotation[0], 2)
-				ry = round(rotation[1], 2)
-				rz = round(rotation[2], 2)
+				if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
+					rotation = camera_pose.get_rotation_vector()
+					rx = round(rotation[0], 2)
+					ry = round(rotation[1], 2)
+					rz = round(rotation[2], 2)
 
-				translation = camera_pose.get_translation(py_translation)
-				tx = round(translation.get()[0], 2)
-				ty = round(translation.get()[1], 2)
-				tz = round(translation.get()[2], 2)
+					translation = camera_pose.get_translation(py_translation)
+					tx = round(translation.get()[0], 2)
+					ty = round(translation.get()[1], 2)
+					tz = round(translation.get()[2], 2)
 
-				# store data point
-				data_point = [time.time(), rx, ry, tx, ty]
-				self.data.append(data_point)
-				
+					# store data point
+					data_point = [time.time(), rx, ry, tx, ty]
+					self.data.append(data_point)
 
-				text_translation = str((tx, ty, tz))
-				text_rotation = str((rx, ry, rz))
-				pose_data = camera_pose.pose_data(core.PyTransform())
-				viewer.update_zed_position(pose_data)
 
+					text_translation = str((tx, ty, tz))
+					text_rotation = str((rx, ry, rz))
+					pose_data = camera_pose.pose_data(core.PyTransform())
+					viewer.update_zed_position(pose_data)
+					self.save()
 				viewer.update_text(text_translation, text_rotation, tracking_state)
-				self.save()
 			else:
 				tp.c_sleep_ms(1)
 				
