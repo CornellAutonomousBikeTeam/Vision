@@ -22,13 +22,9 @@ import time
 import signal
 import sys
 
-<<<<<<< HEAD
-#import matplotlib
-#import matplotlib.pyplot as plt
-=======
+
 import matplotlib
 import matplotlib.pyplot as plt
->>>>>>> 71a538fb2e119165d314a5de66fc18073a5c8484
 
 class Localization:
 
@@ -92,34 +88,7 @@ class Localization:
 				tracking_state = cam.get_position(camera_pose)
 				text_translation = ""
 				text_rotation = ""
-<<<<<<< HEAD
-				if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
-					rotation = camera_pose.get_rotation_vector()
-					rx = round(rotation[0], 2)
-					ry = round(rotation[1], 2)
 
-					translation = camera_pose.get_translation(py_translation)
-					tx = round(translation.get()[0], 5)
-					ty = round(translation.get()[1], 5)
-
-					# store data point
-					data_point = [time.time(), rx, ry, tx, ty]
-					self.data.append(data_point)
-
-					text_translation = str((tx, ty))
-					text_rotation = str((rx, ry))
-					pose_data = camera_pose.pose_data(core.PyTransform())
-				
-					#plt.scatter(tx,ty)
-					#plt.draw()
-					#plt.pause(0.00000000001)
-
-					if(pts%10==0):
-						self.save()
-					pts+=1
-					print(text_translation)
-					#tp.c_sleep_ms(1)
-=======
 			if tracking_state == sl.PyTRACKING_STATE.PyTRACKING_STATE_OK:
 				rotation = camera_pose.get_rotation_vector()
 				rx = round(rotation[0], 2)
@@ -139,8 +108,6 @@ class Localization:
 				text_rotation = str((rx, ry))
 				pose_data = camera_pose.pose_data(core.PyTransform())
 
-				#print(text_translation)
->>>>>>> 71a538fb2e119165d314a5de66fc18073a5c8484
 			else:
 				tp.c_sleep_ms(1)
 
