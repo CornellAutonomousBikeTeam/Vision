@@ -24,9 +24,7 @@ while True:
             x1, y1, x2, y2 = i[0]
             cv2.line(frame, (x1, y1), (x2, y2), (0, 255, 0), 5)
 
-    cv2.imshow("sa", o)
-    cv2.imshow("msl", frame)
-
+    cv2.imshow("sa", frame)
 
 cap.release()
 cv2.destroyAllWindows()
