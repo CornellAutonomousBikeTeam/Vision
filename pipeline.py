@@ -46,99 +46,115 @@ def getLabelsLISA():
 def filterCOCO():
 
     coco_to_raph = {
-        'person' : 0,
-        'bicycle' : 1,
-        'car' : 2,
-        'motorcycle' : 3,
-        'airplane': -1,
-        'bus' : 4,
-        'train': -1,
-        'truck' : 5,
-        'boat': -1,
-        'traffic light' : 6,
-        'fire hydrant' : 7,
-        'stop sign' : 8,
-        'parking meter' : 9,
-        'bench' : 10,
-        'bird': -1,
-        'cat' : 11,
-        'dog' : 12,
-        'horse' : 13,
-        'sheep': -1,
-        'cow': -1,
-        'elephant': -1,
-        'bear': -1,
-        'zebra': -1,
-        'giraffe': -1,
-        'backpack': -1,
-        'umbrella': -1,
-        'handbag': -1,
-        'tie': -1,
-        'suitcase': -1,
-        'frisbee': -1,
-        'skis': -1,
-        'snowboard': -1,
-        'sports ball': -1,
-        'kite': -1,
-        'baseball bat': -1,
-        'baseball glove': -1,
-        'skateboard': -1,
-        'surfboard': -1,
-        'tennis racket': -1,
-        'bottle': -1,
-        'wine glass': -1,
-        'cup': -1,
-        'fork': -1,
-        'knife': -1,
-        'spoon': -1,
-        'bowl': -1,
-        'banana': -1,
-        'apple': -1,
-        'sandwich': -1,
-        'orange': -1,
-        'broccoli': -1,
-        'carrot': -1,
-        'hot dog': -1,
-        'pizza': -1,
-        'donut': -1,
-        'cake': -1,
-        'chair': -1,
-        'couch': -1,
-        'potted plant': -1,
-        'bed': -1,
-        'dining table': -1,
-        'toilet': -1,
-        'tv': -1,
-        'laptop': -1,
-        'mouse': -1,
-        'remote': -1,
-        'keyboard': -1,
-        'cell phone': -1,
-        'microwave': -1,
-        'oven': -1,
-        'toaster': -1,
-        'sink': -1,
-        'refrigerator': -1,
-        'book': -1,
-        'clock': -1,
-        'vase': -1,
-        'scissors': -1,
-        'teddy bear': -1,
-        'hair drier': -1,
-        'toothbrush': -1
+        '0' : 0,
+        '1' : 1,
+        '2' : 2,
+        '3' : 3,
+        '4': -1,
+        '5' : 4,
+        '6': -1,
+        '7' : 5,
+        '8': -1,
+        '9' : 6,
+        '10' : 7,
+        '11' : 8,
+        '12' : 9,
+        '13' : 10,
+        '14': -1,
+        '15' : 11,
+        '16' : 12,
+        '17' : 13,
+        '18': -1,
+        '19': -1,
+        '20': -1,
+        '21': -1,
+        '22': -1,
+        '23': -1,
+        '24': -1,
+        '25': -1,
+        '26': -1,
+        '27': -1,
+        '28': -1,
+        '29': -1,
+        '30': -1,
+        '31': -1,
+        '32': -1,
+        '33': -1,
+        '34': -1,
+        '35': -1,
+        '36': -1,
+        '37': -1,
+        '38': -1,
+        '39': -1,
+        '40': -1,
+        '41': -1,
+        '42': -1,
+        '43': -1,
+        '44': -1,
+        '45': -1,
+        '46': -1,
+        '47': -1,
+        '48': -1,
+        '49': -1,
+        '50': -1,
+        '51': -1,
+        '52': -1,
+        '53': -1,
+        '54': -1,
+        '55': -1,
+        '56': -1,
+        '57': -1,
+        '58': -1,
+        '59': -1,
+        '60': -1,
+        '61': -1,
+        '62': -1,
+        '63': -1,
+        '64': -1,
+        '65': -1,
+        '66': -1,
+        '67': -1,
+        '68': -1,
+        '69': -1,
+        '70': -1,
+        '71': -1,
+        '72': -1,
+        '73': -1,
+        '74': -1,
+        '75': -1,
+        '76': -1,
+        '77': -1,
+        '78': -1,
+        '79': -1
     }
 
-    path = "/home/autobike/yolov7/coco/labels/"
-    for p in [path+"/"+"train2017", path+"/"+"val2017"]:
-        all_files = os.listdir(p)
+    coco_path = "/home/autobike/yolov7/coco/labels/"
+    raph_path = "/home/autobike/yolov7/raph/labels/"
+
+    for p in ["train2017", "val2017"]:
+        
+        path = coco_path + "/" + p
+        keepers = dict()
+
+        all_files = os.listdir(path)
+
+        c = 0
+
         for f in all_files:
-            annot_file = open(p+"/"+f)
+            to_keep = []
+            annot_file = open(path+"/"+f)
             annot_data = csv.reader(annot_file, delimiter = ' ')
             for row in annot_data:
-                print(row)
-                print()
-            break
-        break
+                if coco_to_raph[row[0]] != -1:
+                    row[0] = str(coco_to_raph[row[0]])
+                    to_keep.append(" ".join(row))
+            
+            if to_keep!=[]:
+                keepers[f] = "\n".join(to_keep)
+
+        #dump content of keepers in dict
+        with open(raph_path+"/"+p+".json", "w") as f:
+            json.dump(keepers, f)
 
 
 
