@@ -1,6 +1,7 @@
 import csv
 import os
 import json
+import shutil
 
 # Get the list of classes for LISA
 def getLabelsLISA():
@@ -128,9 +129,6 @@ def filterCOCO():
         '79': -1
     }
 
-    coco_path = "/home/autobike/yolov7/coco/labels/"
-    raph_path = "/home/autobike/yolov7/raph/labels/"
-
     for p in ["train2017", "val2017"]:
         
         path = coco_path + "/" + p
@@ -156,8 +154,24 @@ def filterCOCO():
         with open(raph_path+"/"+p+".json", "w") as f:
             json.dump(keepers, f)
 
+# Read json dumped file and copying images to the right location in raph
+def moveImages():
 
+    raph_path = "/home/autobike/yolov7/raph/labels/"
 
+    for p in ["train2017", "val2017"]:
+        
+        path = raph_path + p+".json"
 
+        json_file = open(path)
 
-filterCOCO()
+        data = json.load(json_file)
+
+        l = list(data.keys())
+
+        images_path = "/home/autobike/yolov7/raph/images/"
+
+        for filename in l:
+            imagename = filename.replace(".txt", ".jpg")
+            shutil.copy("/home/autobike/yolov7/coco/images/" + p + "/" + imagename , images_path + p)
+            shutil.copy("/home/autobike/yolov7/coco/labels/" + p + "/" + filename , raph_path + p)
