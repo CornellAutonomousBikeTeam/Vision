@@ -2,6 +2,7 @@ import csv
 import os
 import json
 import shutil
+import cv2
 
 # Get the list of classes for LISA
 def getLabelsLISA():
@@ -175,3 +176,53 @@ def moveImages():
             imagename = filename.replace(".txt", ".jpg")
             shutil.copy("/home/autobike/yolov7/coco/images/" + p + "/" + imagename , images_path + p)
             shutil.copy("/home/autobike/yolov7/coco/labels/" + p + "/" + filename , raph_path + p)
+
+def convertingLISA():
+
+    LISA_to_Raph = {
+        'warning':14,
+        'stopLeft':15,
+        'warningLeft':16,
+        'go':17,
+        'goLeft':18,
+        'stop':19,
+        'goForward':20
+    }
+
+    direct = "../Downloads/LISA/Annotations/Annotations/"
+    sub_dir = os.listdir(direct)
+
+    # key is path to image file, value is all <class, x_center, y_center, width, height> for that image file
+    final_dict = dict()
+
+    for sdir in sub_dir:
+        if sdir=='dayTrain' or sdir == "nightTrain":
+            sub_sub_dir = os.listdir(direct+sdir)
+            for ssdir in sub_sub_dir:
+                # print(ssdir)
+                for annotfile in os.listdir(direct+"/"+sdir+"/"+ssdir):
+                    annot = open(direct+"/"+sdir+"/"+ssdir+"/"+annotfile)
+                    annot_csv = csv.reader(annot, delimiter=';')
+                    next(annot_csv)
+                    # for row in annot_csv:
+                    #     # 'Filename', 'Annotation tag', 'Upper left corner X', 'Upper left corner Y', 'Lower right corner X', 'Lower right corner Y', 'Origin file', 'Origin frame number', 'Origin track', 'Origin track frame number']
+                        
+                    #     img_shape = cv2.imread()
+        else:
+            for annotfile in os.listdir(direct+"/"+sdir):
+                annot = open(direct+"/"+sdir+"/"+annotfile)
+                annot_csv = csv.reader(annot, delimiter=';')
+                next(annot_csv)
+                for row in annot_csv:
+                    LISA_dir = row[0].split('/')[1].split("--")[0]
+                    abs_path = "/home/autobike/Downloads/LISA/"+LISA_dir+"/"+LISA_dir+"/frames/"+row[0].split('/')[1]
+
+                    img_shape = cv2.imread(abs_path)
+
+                    coco_class = LISA_to_Raph[row[1]]
+                    up_left_x, up_left_y, low_right_x, low_right_y = row[2], row[3], row[4], row[5]
+                    
+                    normed = 
+                    
+
+convertingLISA()
